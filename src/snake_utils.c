@@ -48,7 +48,7 @@ int move_snake(Game_data* game)
         case RIGHT:
             if (snake->head->x + 1 >= game->x)
                 return 0;
-            iter->y -= 1;
+            iter->x += 1;
             break;
         default:
             return 0;

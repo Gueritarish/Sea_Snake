@@ -54,7 +54,8 @@ void display_frame(Game_data* game)
     Snake_node* iter = game->snake->tail;
     while(iter != game->snake->head)
     {
-        game->map[iter->y][iter->x] = '#'; 
+        game->map[iter->y][iter->x] = '#';
+        iter = iter->prev;
     }
     game->map[iter->y][iter->x] = '@';
     game->map[game->app_y][game->app_x] = 'o';
@@ -93,6 +94,19 @@ int game_start(size_t heigth, size_t width)
     display_frame(&game);
     printf("\n\n");
     snake_growth(&game);
+    move_snake(&game);
+    display_frame(&game);
+    printf("\n\n");
+    snake_growth(&game);
+    move_snake(&game);
+    display_frame(&game);
+    printf("\n\n");
+    move_snake(&game);
+    display_frame(&game);
+    printf("\n\n");
+    move_snake(&game);
+    display_frame(&game);
+    printf("\n\n");
     move_snake(&game);
     display_frame(&game);
     return 0;
