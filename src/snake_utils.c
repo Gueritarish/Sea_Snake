@@ -28,7 +28,7 @@ int move_snake(Game_data* game)
     switch (snake->direction)
     {
         case UP:
-            if (snake->head->y - 1 < 0)
+            if (snake->head->y == 0)
                 return 0;
             iter->y -= 1;
             break;
@@ -40,13 +40,13 @@ int move_snake(Game_data* game)
             break;
 
         case LEFT:
-            if (snake->head->x - 1 < 0)
+            if (snake->head->x == 0)
                 return 0;
             iter->x -= 1;
             break;
         
         case RIGHT:
-            if (snake->head->x + 1 < 0)
+            if (snake->head->x + 1 >= game->x)
                 return 0;
             iter->y -= 1;
             break;

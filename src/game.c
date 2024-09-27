@@ -1,10 +1,13 @@
 #include "game.h"
+#include "snake_utils.h"
+
+#include <stdio.h>
 
 void init_snake(Game_data* game)
 {
     size_t snake_x = game->x / 4;
     size_t half_y = game->y / 2;
-    size_t apple_x = 3 * snake_x;
+    size_t apple_x = 3 * snake_x + 1;
     game->app_x = apple_x;
     game->app_y = half_y;
 
@@ -54,6 +57,7 @@ void display_frame(Game_data* game)
         game->map[iter->y][iter->x] = '#'; 
     }
     game->map[iter->y][iter->x] = '@';
+    game->map[game->app_y][game->app_x] = 'o';
     for (size_t i = 0; i < game->y + 2;i++)
     {
         for (size_t j = 0; j < 2 * game->x + 2; j++)
@@ -86,6 +90,10 @@ int game_start(size_t heigth, size_t width)
 {
     Game_data game;
     build_area(&game,heigth,width);
+    display_frame(&game);
+    printf("\n\n");
+    snake_growth(&game);
+    move_snake(&game);
     display_frame(&game);
     return 0;
 }
