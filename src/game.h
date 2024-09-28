@@ -22,11 +22,12 @@ typedef struct{
     enum Direction direction;
 } Snake;
 
-typedef struct{
+typedef struct Game_data{
     char** map;
     Snake* snake;
     size_t x,y;
     size_t app_x,app_y;
+    int finished;
 } Game_data;
 
 void init_snake(Game_data* game);

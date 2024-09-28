@@ -3,4 +3,6 @@ add_executable(snake
                 game.c
                 game.h
                 snake_utils.c
-                snake_utils.h)
+                snake_utils.h
+                input.c
+                input.h)

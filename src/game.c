@@ -1,11 +1,19 @@
 #include "game.h"
 #include "snake_utils.h"
+#include "input.h"
 
 #include <stdio.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
+
+#define _XOPEN_SOURCE 500
 
 void init_snake(Game_data* game)
 {
-    size_t snake_x = game->x / 4;
+    size_t snake_x = game->x / 4 - 1;
     size_t half_y = game->y / 2;
     size_t apple_x = 3 * snake_x + 1;
     game->app_x = apple_x;
@@ -33,7 +41,7 @@ void build_area(Game_data* game, size_t height, size_t width)
 
     if (width < 9)
         width = 9;
-
+    game->finished = 0;
     game->x = width;
     game->y = height;
     game->map = calloc(sizeof(char *),game->y);
@@ -87,27 +95,64 @@ void display_frame(Game_data* game)
     }
 }
 
+void free_game(Game_data* game)
+{
+    for (size_t i = 0; i < game->y; i++)
+    {
+        free(game->map[i]);
+    }
+    free(game->map);
+
+    Snake_node* head = game->snake->head;
+    Snake_node* temp = head->next;
+    while (temp != NULL)
+    {
+        free(head);
+        head = temp;
+        temp = head->next;
+    }
+    free(head);
+    free(game->snake);
+}
+
+
 int game_start(size_t heigth, size_t width)
 {
+    srand(time(NULL));
     Game_data game;
+
     build_area(&game,heigth,width);
-    display_frame(&game);
-    printf("\n\n");
     snake_growth(&game);
     move_snake(&game);
     display_frame(&game);
     printf("\n\n");
-    snake_growth(&game);
-    move_snake(&game);
-    display_frame(&game);
-    printf("\n\n");
-    move_snake(&game);
-    display_frame(&game);
-    printf("\n\n");
-    move_snake(&game);
-    display_frame(&game);
-    printf("\n\n");
-    move_snake(&game);
-    display_frame(&game);
+
+    sleep(4); 
+    int move_status;
+    while (!game.finished)
+    {
+
+        usleep(350000);
+        gather_input(&game);
+        move_status = move_snake(&game);
+        if (move_status == 0)
+        {
+            game.finished = 1;
+            printf("You lost. Score : %ld.\n",game.snake->size - 2);
+        }
+        else if (move_status == 2)
+        {
+            game.finished = 1;
+            printf("You win, congratulations.\n");
+        }
+        else
+        {
+            display_frame(&game);
+        }
+    }
+    free_game(&game);
+    // Restore the terminal settings
+    disable_raw_mode();
+
     return 0;
 }
